@@ -2,7 +2,13 @@ import Container from "@/components/container";
 import Header from "@/components/header";
 import ListMusicCard from "@/components/listcard";
 import Section from "@/components/section";
-import { selectUser, setUser } from "@/redux/slices/appSlice";
+import {
+  selectFeaturedPlaylists,
+  selectUser,
+  setFeaturedPlaylists,
+  setUser,
+} from "@/redux/slices/appSlice";
+import getFeaturedPlaylists from "@/utils/get-featured-playlists";
 import getUser from "@/utils/getUser";
 import jsCookies from "js-cookies";
 import Head from "next/head";
@@ -12,37 +18,39 @@ import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Home() {
-  const [scroll,setScroll] = useState(0)
-  const dispatch = useDispatch()
-  const user = useSelector(selectUser)
+  const [scroll, setScroll] = useState(0);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const featuredPlaylists = useSelector(selectFeaturedPlaylists);
 
-  console.log("Store user",user)
- 
+  console.log(`Featured `, featuredPlaylists);
 
+  useEffect(() => {
+    document.body.addEventListener("scroll", (e) => {
+      setScroll(e.target.scrollTop);
+      console.log("scrollig");
+    });
 
+    async function fetchUser() {
+      const u = await getUser();
+      dispatch(setUser(u));
+      console.log(u);
+    }
 
+    async function fetchFeaturedPlaylists() {
+      const featured = await getFeaturedPlaylists();
+      console.log(featured);
+      dispatch(setFeaturedPlaylists(featured.playlists.items));
+    }
 
-  useEffect(()=>{
-   
-      document.body.addEventListener("scroll",(e)=>{
-        
-        setScroll(e.target.scrollTop)
-        console.log("scrollig")
-      })
-
-       async function fetchUser(){
-        const u = await getUser()
-        dispatch(setUser(u))
-        console.log(u);
-      }
-
-      if(localStorage.getItem("ACCESS_TOKEN") && localStorage.getItem("REFRESH_TOKEN")){
-        
-
-        fetchUser()
-      }
-    
-  },[])
+    if (
+      localStorage.getItem("ACCESS_TOKEN") &&
+      localStorage.getItem("REFRESH_TOKEN")
+    ) {
+      fetchUser();
+      fetchFeaturedPlaylists();
+    }
+  }, []);
   return (
     <>
       <Head>
@@ -52,7 +60,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="h-[100vh]">
-        <Header scroll={scroll}/>
+        <Header scroll={scroll} />
         <Container>
           <section>
             <ul className="flex gap-4  ">
@@ -83,21 +91,27 @@ export default function Home() {
               </li>
             </ul>
             <div>
-              <div className="hero_section_header flex justify-between my-12">
-               { user && <div
-                  className="header-avatar w-32 h-32 "
-                 
-                >
-
-                  <img src={user.images[0].url} alt="" className="w-full h-full rounded-full" />
-                </div>}
-                <div className="header-text-content flex-1 text-white ml-12">
+              <div className="hero_section_header md:flex justify-between my-12">
+                {user && (
+                  <div className="header-avatar w-32 h-32 group border-2 border-white rounded-full overflow-hidden">
+                    <img
+                      src={user.images[0].url}
+                      alt=""
+                      className="w-full h-full rounded-full shadow-2xl  group-hover:scale-110 transition-all"
+                    />
+                  </div>
+                )}
+                <div className="header-text-content flex-1 text-white mt-3 md:mt-0 md:ml-12">
                   <h2 className="text-md text-white/50">
                     MUSIC TO GET YOU STARTED
                   </h2>
-                 { user && <h1 className="text-4xl font-semibold">Welcome {user.display_name}</h1>}
+                  {user && (
+                    <h1 className="text-4xl font-semibold">
+                      Welcome {user.display_name}
+                    </h1>
+                  )}
                 </div>
-                <div className="section-nav-controls flex items-center gap-4">
+                <div className="section-nav-controls flex items-center gap-4 mt-3 md:mt-0">
                   <button className="w-10 h-10 border border-white rounded-full flex items-center justify-center">
                     <FiChevronLeft className="text-white" />
                   </button>
@@ -106,28 +120,18 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-              <div className="hero-section-cards grid grid-cols-3 gap-x-10 gap-y-2">
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
-                <ListMusicCard />
+              <div className="hero-section-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-2">
+                {featuredPlaylists.map((featured_playlist, i) => {
+                  return <ListMusicCard key={i} playlist={featured_playlist} />;
+                })}
               </div>
             </div>
           </section>
-          <Section/>
-          <Section/>
-          <Section/>
-          <Section/>
+          <Section />
+          <Section />
+          <Section />
+          <Section />
         </Container>
-    
       </main>
     </>
   );
