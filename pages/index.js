@@ -4,10 +4,13 @@ import ListMusicCard from "@/components/listcard";
 import Section from "@/components/section";
 import {
   selectFeaturedPlaylists,
+  selectFollowingArtsis,
   selectUser,
   setFeaturedPlaylists,
+  setFollowingArtists,
   setUser,
 } from "@/redux/slices/appSlice";
+import getFollowedArtsist from "@/utils/following-artists";
 import getFeaturedPlaylists from "@/utils/get-featured-playlists";
 import getUser from "@/utils/getUser";
 import jsCookies from "js-cookies";
@@ -22,6 +25,9 @@ export default function Home() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const featuredPlaylists = useSelector(selectFeaturedPlaylists);
+  const followingArtists = useSelector(selectFollowingArtsis);
+
+  console.log("Artissts", followingArtists);
 
   console.log(`Featured `, featuredPlaylists);
 
@@ -37,6 +43,12 @@ export default function Home() {
       console.log(u);
     }
 
+    async function fetchFollowedArtists() {
+      const fartists = await getFollowedArtsist();
+      console.log("artists", fartists);
+      dispatch(setFollowingArtists(fartists.artists.items));
+    }
+
     async function fetchFeaturedPlaylists() {
       const featured = await getFeaturedPlaylists();
       console.log(featured);
@@ -49,6 +61,7 @@ export default function Home() {
     ) {
       fetchUser();
       fetchFeaturedPlaylists();
+      fetchFollowedArtists();
     }
   }, []);
   return (
@@ -59,7 +72,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="h-[100vh]">
+      <main className="h-[100vh] main relative">
         <Header scroll={scroll} />
         <Container>
           <section>
@@ -76,7 +89,7 @@ export default function Home() {
               </li>
               <li>
                 <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Commuyte
+                  Commute
                 </button>
               </li>
               <li>
@@ -127,10 +140,9 @@ export default function Home() {
               </div>
             </div>
           </section>
-          <Section />
-          <Section />
-          <Section />
-          <Section />
+          {followingArtists.length && (
+            <Section name="Your Top Artists" items={followingArtists[0]} />
+          )}
         </Container>
       </main>
     </>
