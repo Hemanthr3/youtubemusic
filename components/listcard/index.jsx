@@ -3,14 +3,34 @@ import { BiDislike, BiLike } from "react-icons/bi";
 import { IoMdMore } from "react-icons/io";
 import { FaPlay, FaPause } from "react-icons/fa";
 import playAlbum from "@/utils/play-album";
+import getPlayer from "@/utils/getPlayer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectPlayer,
+  selectUri,
+  setPlayer,
+  setUri,
+} from "@/redux/slices/appSlice";
 
 function ListMusicCard({ playlist }) {
   console.log(playlist);
+  const dispatch = useDispatch();
+  const currecntUri = useSelector(selectUri);
   const [play, setPlay] = useState(false);
 
+  const player = useSelector(selectPlayer);
+
   const handlePlay = async () => {
-    const r = await playAlbum(playlist.uri);
-    setPlay(true);
+    if (!play) {
+      const r = await playAlbum(playlist.uri);
+      setPlay(true);
+      const state = await getPlayer();
+      console.log("current player state", state);
+      dispatch(setUri(playlist.uri));
+      dispatch(setPlayer(state));
+    } else {
+      setPlay(false);
+    }
   };
   return (
     <div className="flex gap-4 items-center group relative">
@@ -25,10 +45,10 @@ function ListMusicCard({ playlist }) {
             className="scale-0 group-hover:scale-100 transition-all"
             onClick={handlePlay}
           >
-            {!play ? (
-              <FaPlay className="text-white" />
-            ) : (
+            {player?.is_playing && playlist.uri === currecntUri ? (
               <FaPause className="text-white" />
+            ) : (
+              <FaPlay className="text-white" />
             )}
           </button>
         </div>

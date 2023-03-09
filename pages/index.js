@@ -1,6 +1,7 @@
 import Container from "@/components/container";
 import Header from "@/components/header";
 import ListMusicCard from "@/components/listcard";
+import Player from "@/components/player";
 import Section from "@/components/section";
 import {
   selectFeaturedPlaylists,
@@ -8,10 +9,12 @@ import {
   selectUser,
   setFeaturedPlaylists,
   setFollowingArtists,
+  setPlayer,
   setUser,
 } from "@/redux/slices/appSlice";
 import getFollowedArtsist from "@/utils/following-artists";
 import getFeaturedPlaylists from "@/utils/get-featured-playlists";
+import getPlayer from "@/utils/getPlayer";
 import getUser from "@/utils/getUser";
 import jsCookies from "js-cookies";
 import Head from "next/head";
@@ -49,6 +52,12 @@ export default function Home() {
       dispatch(setFollowingArtists(fartists.artists.items));
     }
 
+    async function fetchPlayer(){
+      const playeState = await getPlayer();
+      console.log('player state',playeState);
+      dispatch(setPlayer(playeState));
+    }
+
     async function fetchFeaturedPlaylists() {
       const featured = await getFeaturedPlaylists();
       console.log(featured);
@@ -62,6 +71,7 @@ export default function Home() {
       fetchUser();
       fetchFeaturedPlaylists();
       fetchFollowedArtists();
+      fetchPlayer();
     }
   }, []);
   return (
@@ -144,6 +154,7 @@ export default function Home() {
             <Section name="Your Top Artists" items={followingArtists[0]} />
           )}
         </Container>
+        <Player/>
       </main>
     </>
   );
