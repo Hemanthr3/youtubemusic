@@ -33,7 +33,7 @@ function ListMusicCard({ playlist }) {
     }
   };
   return (
-    <div className="flex gap-4 items-center group relative">
+    <div className={`flex gap-4 items-center group relative ${ playlist.uri === currecntUri && "bg-slate-400/20"}`}>
       <div className="song-cover w-10 h-10 bg-gray-300 relative">
         <img
           src={playlist.images[0].url}
@@ -45,7 +45,7 @@ function ListMusicCard({ playlist }) {
             className="scale-0 group-hover:scale-100 transition-all"
             onClick={handlePlay}
           >
-            {player?.is_playing && playlist.uri === currecntUri ? (
+            {player?.is_playing && playlist.uri === currecntUri && play ? (
               <FaPause className="text-white" />
             ) : (
               <FaPlay className="text-white" />

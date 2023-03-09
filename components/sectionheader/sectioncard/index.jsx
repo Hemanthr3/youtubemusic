@@ -1,17 +1,39 @@
+import {
+  selectPlayer,
+  selectUri,
+  setPlayer,
+  setUri,
+} from "@/redux/slices/appSlice";
+import getPlayer from "@/utils/getPlayer";
 import playAlbum from "@/utils/play-album";
 import playTrack from "@/utils/playPlaylists";
 import React, { useState } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+
 const SectionCard = ({ images, name, uri }) => {
   const [play, setPlay] = useState(false);
 
+  const currentUri = useSelector(selectUri);
+  const dispatch = useDispatch();
+  const player = useSelector(selectPlayer);
+
   const handlePlay = async () => {
-    const r = await playTrack(uri);
-    setPlay(true);
+    if (!play) {
+      const r = await playTrack(uri);
+      dispatch(setUri(uri));
+      setPlay(true);
+      const state = await getPlayer();
+      dispatch(setPlayer(state));
+    } else {
+      setPlay(false);
+    }
   };
   return (
-    <div className="w-full group">
-      <div className="song-card-cover w-full h-[200px] bg-gray-300 relative rounded-md">
+    <div className={`w-full group ${uri === currentUri && "bg-white/40"}`}>
+      <div
+        className={`song-card-cover w-full h-[200px] bg-gray-300 relative rounded-md`}
+      >
         <img
           src={images[0].url}
           alt=""
@@ -22,10 +44,10 @@ const SectionCard = ({ images, name, uri }) => {
             className="scale-0 group-hover:scale-100 transition-all absolute bottom-6 w-10 h-10 right-5 group-hover:bg-black/70 rounded-full flex items-center justify-center"
             onClick={handlePlay}
           >
-            {!play ? (
-              <FaPlay className="text-white" />
-            ) : (
+            {player?.is_playing && uri === currentUri && play ? (
               <FaPause className="text-white" />
+            ) : (
+              <FaPlay className="text-white" />
             )}
           </button>
         </div>

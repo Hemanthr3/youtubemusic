@@ -14,7 +14,7 @@ const CurrentPlayercard = ({ player }) => {
         />
       </div>
       <div className="song-list-content">
-        <h2 className="text-white text-xl font-semibold">{player?.item.name}</h2>
+        <h2 className="text-white text-xl font-semibold">{player?.item?.name}</h2>
         <p className="text-white/50">{player?.item?.artists[0].name}</p>
       </div>
 
