@@ -35,23 +35,34 @@ const Player = () => {
     <div
       className={`${
         playerState?.is_playing ? "flex" : "hidden"
-      }  bottom-0 w-full py-2 bg-gray-900 px-4 sticky  justify-between items-center text-white z-50`}
+      }  bottom-0 w-full pt-8 pb-4 md:py-3 bg-gray-900 px-4 sticky  justify-between items-center text-white z-50`}
     >
-      <div className="flex items-center gap-3">
+      <div
+        className={`transition-all absolute -top-5 left-[50%] translate-x-[-50%] md:translate-x-0 md:static flex items-center gap-3`}
+      >
         <div className="flex gap-6 items-center">
-          <button onClick={handlePrevious}>
+          <button
+            onClick={handlePrevious}
+            className="px-3 md:px-0 py-3 md:py-0 bg-red-700 md:bg-transparent rounded-full md:rounded-none"
+          >
             <MdSkipPrevious className="text-2xl" />
           </button>
-          <button onClick={handlePause}>
+          <button
+            onClick={handlePause}
+            className="px-3 md:px-0 py-3 md:py-0 bg-red-700 md:bg-transparent rounded-full md:rounded-none"
+          >
             {!play ? <FaPlay /> : <FaPause />}
           </button>
-          <button onClick={handlePlayNext}>
+          <button
+            onClick={handlePlayNext}
+            className="px-3 md:px-0 py-3 md:py-0 bg-red-700 md:bg-transparent rounded-full md:rounded-none"
+          >
             <MdSkipNext className="text-2xl" />
           </button>
         </div>
-        <p className="text-xs text-white/50">2:09 / 3:09</p>
+        <p className="text-xs text-white/50 hidden md:block">2:09 / 3:09</p>
       </div>
-      <div className="flex flex-1 justify-center items-center">
+      <div className="flex md:flex-1 justify-center items-center">
         <CurrentPlayercard player={playerState} />
       </div>
       <div>
