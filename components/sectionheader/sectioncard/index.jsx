@@ -52,7 +52,7 @@ const SectionCard = ({ images, name, uri }) => {
           </button>
         </div>
       </div>
-      <div className="song-card-footer mt-2">
+      <div className="song-card-footer mt-2 px-3 rounded-b-md">
         <h3 className="text-white">{name}</h3>
         <p className="text-white/70">Album description</p>
       </div>

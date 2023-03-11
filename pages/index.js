@@ -52,9 +52,9 @@ export default function Home() {
       dispatch(setFollowingArtists(fartists.artists.items));
     }
 
-    async function fetchPlayer(){
+    async function fetchPlayer() {
       const playeState = await getPlayer();
-      console.log('player state',playeState);
+      console.log("player state", playeState);
       dispatch(setPlayer(playeState));
     }
 
@@ -82,80 +82,84 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="h-[100vh] main relative">
-        <Header scroll={scroll} />
-        <Container>
-          <section>
-            <ul className="flex gap-4  ">
-              <li>
-                <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Relax
-                </button>
-              </li>
-              <li>
-                <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Enerzige
-                </button>
-              </li>
-              <li>
-                <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Commute
-                </button>
-              </li>
-              <li>
-                <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Workout
-                </button>
-              </li>
-              <li>
-                <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
-                  Focus
-                </button>
-              </li>
-            </ul>
-            <div>
-              <div className="hero_section_header md:flex justify-between my-12">
-                {user && (
-                  <div className="header-avatar w-32 h-32 group border-2 border-white rounded-full overflow-hidden">
-                    <img
-                      src={user.images[0].url}
-                      alt=""
-                      className="w-full h-full rounded-full shadow-2xl  group-hover:scale-110 transition-all"
-                    />
-                  </div>
-                )}
-                <div className="header-text-content flex-1 text-white mt-3 md:mt-0 md:ml-12">
-                  <h2 className="text-md text-white/50">
-                    MUSIC TO GET YOU STARTED
-                  </h2>
+      <div className="body">
+        <main className="h-[100vh] main relative">
+          <Header scroll={scroll} />
+          <Container>
+            <section>
+              <ul className="flex gap-4  ">
+                <li>
+                  <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
+                    Relax
+                  </button>
+                </li>
+                <li>
+                  <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
+                    Enerzige
+                  </button>
+                </li>
+                <li>
+                  <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
+                    Commute
+                  </button>
+                </li>
+                <li>
+                  <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
+                    Workout
+                  </button>
+                </li>
+                <li>
+                  <button className=" px-3 py-1 rounded-md bg-white/30 text-white">
+                    Focus
+                  </button>
+                </li>
+              </ul>
+              <div>
+                <div className="hero_section_header md:flex justify-between my-12">
                   {user && (
-                    <h1 className="text-4xl font-semibold">
-                      Welcome {user.display_name}
-                    </h1>
+                    <div className="header-avatar w-32 h-32 group border-2 border-white rounded-full overflow-hidden">
+                      <img
+                        src={user.images[0].url}
+                        alt=""
+                        className="w-full h-full rounded-full shadow-2xl  group-hover:scale-110 transition-all"
+                      />
+                    </div>
                   )}
+                  <div className="header-text-content flex-1 text-white mt-3 md:mt-0 md:ml-12">
+                    <h2 className="text-md text-white/50">
+                      MUSIC TO GET YOU STARTED
+                    </h2>
+                    {user && (
+                      <h1 className="text-4xl font-semibold">
+                        Welcome {user.display_name}
+                      </h1>
+                    )}
+                  </div>
+                  <div className="section-nav-controls flex items-center gap-4 mt-3 md:mt-0">
+                    <button className="w-10 h-10 border border-white rounded-full flex items-center justify-center">
+                      <FiChevronLeft className="text-white" />
+                    </button>
+                    <button className="w-10 h-10 border border-white rounded-full flex items-center justify-center">
+                      <FiChevronRight className="text-white" />
+                    </button>
+                  </div>
                 </div>
-                <div className="section-nav-controls flex items-center gap-4 mt-3 md:mt-0">
-                  <button className="w-10 h-10 border border-white rounded-full flex items-center justify-center">
-                    <FiChevronLeft className="text-white" />
-                  </button>
-                  <button className="w-10 h-10 border border-white rounded-full flex items-center justify-center">
-                    <FiChevronRight className="text-white" />
-                  </button>
+                <div className="hero-section-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-2">
+                  {featuredPlaylists.map((featured_playlist, i) => {
+                    return (
+                      <ListMusicCard key={i} playlist={featured_playlist} />
+                    );
+                  })}
                 </div>
               </div>
-              <div className="hero-section-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-2">
-                {featuredPlaylists.map((featured_playlist, i) => {
-                  return <ListMusicCard key={i} playlist={featured_playlist} />;
-                })}
-              </div>
-            </div>
-          </section>
-          {followingArtists.length && (
-            <Section name="Your Top Artists" items={followingArtists[0]} />
-          )}
-        </Container>
-        <Player/>
-      </main>
+            </section>
+            {followingArtists.length && (
+              <Section name="Your Top Artists" items={followingArtists[0]} />
+            )}
+          </Container>
+          <Player />
+        </main>
+      </div>
     </>
   );
 }

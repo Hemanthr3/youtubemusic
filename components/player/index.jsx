@@ -1,26 +1,51 @@
-import { selectPlayer } from "@/redux/slices/appSlice";
-import React from "react";
+import { selectPlayer, setPlayer } from "@/redux/slices/appSlice";
+import React, { useState } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { MdSkipPrevious, MdSkipNext } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CurrentPlayercard from "../currentsongcard";
+import { GoChevronDown, GoChevronUp } from "react-icons/go";
+import playNext from "@/utils/PlayNeext";
+import PauseSong from "@/utils/PauseSong";
+import playPrevious from "@/utils/PlayPrevious";
 
 const Player = () => {
   const playerState = useSelector(selectPlayer);
+  const [up, setUp] = useState(false);
+  const [play, setPlay] = useState(true);
+  const dispatch = useDispatch();
 
+  const handlePrevious = async () => {
+    const feedback = await playPrevious();
+    console.log(feedback);
+  };
+
+  const handlePlayNext = async () => {
+    const feedback = await playNext();
+    console.log(feedback);
+  };
+
+  const handlePause = async () => {
+    const feeback = await PauseSong();
+    console.log(feeback);
+    dispatch(setPlayer(null));
+    setPlay(false);
+  };
   return (
     <div
       className={`${
         playerState?.is_playing ? "flex" : "hidden"
-      }  bottom-0 w-full py-2 bg-gray-900 px-4 sticky  justify-between items-center text-white`}
+      }  bottom-0 w-full py-2 bg-gray-900 px-4 sticky  justify-between items-center text-white z-50`}
     >
       <div className="flex items-center gap-3">
         <div className="flex gap-6 items-center">
-          <button>
+          <button onClick={handlePrevious}>
             <MdSkipPrevious className="text-2xl" />
           </button>
-          <button>{!playerState?.is_playing ? <FaPlay /> : <FaPause />}</button>
-          <button>
+          <button onClick={handlePause}>
+            {!play ? <FaPlay /> : <FaPause />}
+          </button>
+          <button onClick={handlePlayNext}>
             <MdSkipNext className="text-2xl" />
           </button>
         </div>
@@ -29,7 +54,60 @@ const Player = () => {
       <div className="flex flex-1 justify-center items-center">
         <CurrentPlayercard player={playerState} />
       </div>
-      <div>right</div>
+      <div>
+        <button
+          className="w-9 h-9 bg-white/30 flex items-center justify-center rounded-full"
+          onClick={() => setUp(!up)}
+        >
+          <GoChevronUp />
+        </button>
+      </div>
+      <div
+        className={`player_more_info_modal w-full inset-x-0 z-5 h-[100vh] bg-black/90 fixed grid grid-cols-3 ${
+          !up ? "bottom-[-1000px]" : "bottom-[-60px]"
+        }`}
+      >
+        <div className="player-song-big-section col-span-2 flex items-center justify-center">
+          <div className="w-[75%] h-[75%] flex items-center flex-col">
+            <div className="player-type-switcher w-auto mx-auto my-6 bg-gray-300/50 rounded-l-full rounded-r-full">
+              <button className="px-4 py-1 bg-white/60 text-white rounded-full">
+                Audio
+              </button>
+              <button className="px-4 py-1 bg-transparent text-white">
+                Video
+              </button>
+            </div>
+            <div className="player-modal-cover w-[400px] h-[400px] bg-white/40 mx-auto my-auto">
+              <img
+                src="https://lh3.googleusercontent.com/ILK9oEbtJ4NKvJQTNamcDhS9oukw2P6_Q_u0y5lSqzo-evxwOnrRun3nvlKQVI76H7hkoefl92qRfN9q=w544-h544-l90-rj"
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="player-modal-right">
+          <div className="player-current-song-related-tracks">
+            <div className="track-meta-header">
+              <button>Up next</button>
+              <button>Lyrics</button>
+              <button>Related</button>
+            </div>
+            <div className="related-tracks-list">
+              <div className="related-track-list-card">
+                <div className="related-track-cover"></div>
+                <div className="related-track-meta">
+                  <div>
+                    <h2>Track Name</h2>
+                    <p>Track Descriptipn</p>
+                  </div>
+                  <p>02:59</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
